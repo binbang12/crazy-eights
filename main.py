@@ -2,14 +2,16 @@ import random
 import time
 
 template_deck = [
-    "2❤️", "3❤️", "4❤️", "5❤️", "6❤️", "7❤️", "8❤️", "9❤️", "10❤️", "J❤️", "Q❤️", "K❤️", "A❤️",  # Hearts
-    "2💎", "3💎", "4💎", "5💎", "6💎", "7💎", "8💎", "9💎", "10💎", "J💎", "Q💎", "K💎", "A💎",  # Diamonds
-    "2♣️", "3♣️", "4♣️", "5♣️", "6♣️", "7♣️", "8♣️", "9♣️", "10♣️", "J♣️", "Q♣️", "K♣️", "A♣️",  # Clubs
-    "2♠️", "3♠️", "4♠️", "5♠️", "6♠️", "7♠️", "8♠️", "9♠️", "10♠️", "J♠️", "Q♠️", "K♠️", "A♠️"   # Spades
+    "2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", "10H", "JH", "QH", "KH", "AH",  # Hearts
+    "2D", "3D", "4D", "5D", "6D", "7D", "8D", "9D", "10D", "JD", "QD", "KD", "AD",  # Diamonds
+    "2C", "3C", "4C", "5C", "6C", "7C", "8C", "9C", "10C", "JC", "QC", "KC", "AC",  # Clubs
+    "2S", "3S", "4S", "5S", "6S", "7S", "8S", "9S", "10S", "JS", "QS", "KS", "AS"   # Spades
 ]
 
-print(f"\n\n{'#' * 50}")
+print(f"\n\n{'#' * 50}\n")
 print('Welcome to Crazy Eights!\n')
+print(f"{'#' * 50}\n")
+
 
 def gameloop():
     deck = template_deck
@@ -19,20 +21,22 @@ def gameloop():
     time.sleep(2)
     random.shuffle(deck)
 
-    print('Dealing Cards...\n')
+    print('Dealing Cards...')
     time.sleep(2)
     hands, deck = deal_hands(players, deck)
-    faceup = deck[-1]
-
-    display_hands(hands, faceup)
+    faceup = deck.pop()
 
     while True:
         for player in range(1, players + 1):
+            if len(deck) == 0:
+                deck = template_deck
+                deck.remove(faceup)
+                random.shuffle(deck)
             faceup, hands, deck, finished = players_turn(player, deck, hands, faceup)
             if finished:
                 print(f'Player {player} has won the game!')
                 print(f"{'#' * 50}\n\n")
-                break
+                exit()
 
 
 
@@ -56,7 +60,7 @@ def deal_hands(num_of_players, deck):
     return players_hands, deck
 
 def display_hands(hands, faceup):
-    print(f"{'#' * 50}")
+    print(f"\n{'#' * 50}")
     for player, hand in hands.items():
         if player == 'player_1':
             print(f"Your Hand: " + " ".join([f"[{_}]" for _ in hand]))
@@ -67,20 +71,19 @@ def display_hands(hands, faceup):
 
 def players_turn(player, deck, hands, faceup):
     if player == 1:
-        print("Your Turn:\n")
+        time.sleep(1)
+        display_hands(hands, faceup)
         hand = hands['player_1']
-        print
-        print(f"Current Face-up Card is [{deck[-1]}]")
-        print('Pickup A Card: [P]')
+        print('Pickup A Card [P]')
         print("Your Cards are: ", end="")
         for index, card in enumerate(hand):
             print(f"[{card}][{index}] ", end="")
-        print('')
+        print('\n')
 
         while True:
-            returned = input('Which Card Would You Like To Play?: ')
+            returned = input('What would you like to do?: ')
             returned = returned.strip()
-            if returned.isdigit() and hand[int(returned)]:
+            if returned.isdigit() and 0 <= int(returned) < len(hand):
                 returned = int(returned)
                 chosen_card = hand[returned]
 
@@ -95,9 +98,9 @@ def players_turn(player, deck, hands, faceup):
                 elif chosen_card[0] == '8' :
                     print(f"\nYou played a wild 8!")
                     while True:
-                        returned = input(f'Which suit would you like to change it to? [❤️][0], [💎][1], [♣️][2], [♠️][3]: ')
+                        returned = input(f'Which suit would you like to change it to? [H][0], [D][1], [C][2], [S][3]: ')
                         if returned in ["0", "1", "2", "3"]:
-                            suits = {"0": '❤️', "1": '💎', "2": '♣️', "3": '♠️'}
+                            suits = {"0": 'H', "1": 'D', "2": 'C', "3": 'S'}
                             hands['player_1'].remove(chosen_card)
                             faceup = suits[returned]
                             if len(hands['player_1']) > 0:
@@ -107,61 +110,58 @@ def players_turn(player, deck, hands, faceup):
                             return faceup, hands, deck, finished
             elif returned.lower() == 'p':
                 pickup = deck.pop()
-                print(f'You picked up a [{pickup}]')
+                print(f'\nYou picked up a [{pickup}]')
                 hands['player_1'].append(pickup)
                 return faceup, hands, deck, False
     else:
-        print(f"Player {player}'s Turn")
-        print(f'Player {player} is thinking..')
-        time.sleep(1)
+        time.sleep(2)
+        print(f"\nPlayer {player}'s Turn")
+        time.sleep(2)
+        print(f'Player {player} is thinking...')
+        time.sleep(2)
         hand = hands[f'player_{player}']
+        
+        # Try to play a card that matches the suit first
         for card in hand:
-            if card[-1] == faceup[-1]:
+            if card[-1] == faceup[-1] and card[:-1] != "8":  # Matching suit
                 faceup = card
                 hands[f'player_{player}'].remove(card)
                 print(f'Player {player} has played [{card}]')
-                if len(hands[f'player_{player}']) > 0:
-                    finished = False
-                else:
-                    finished = True
+                finished = len(hands[f'player_{player}']) == 0
                 return faceup, hands, deck, finished
+
+        # If no suit match, check for rank match (excluding 8)
         for card in hand:
-            if card[:-1] == faceup[:-1] and not card[:-1] == "8":
+            if card[:-1] == faceup[:-1] and card[:-1] != "8":  # Rank match
                 faceup = card
                 hands[f'player_{player}'].remove(card)
                 print(f'Player {player} has played [{card}]')
-                if len(hands[f'player_{player}']) > 0:
-                    finished = False
-                else:
-                    finished = True
+                finished = len(hands[f'player_{player}']) == 0
                 return faceup, hands, deck, finished
+        
+        # If no matching suit or rank, check if player has a wild 8 and play it strategically
         for card in hand:
-            if card[:-1] == "8":
-                suit_count = {'❤️': 0, '💎': 0, '♣️': 0, '♠️': 0}
+            if card[0] == '8':  # Wild card '8'
+                print(f'Player {player} has played a wild 8!')
+                
+                # Select the suit based on some strategy (e.g., the suit with the fewest cards in hand)
+                suit_count = {'H': 0, 'D': 0, 'C': 0, 'S': 0}
                 for item in hand:
                     suit_count[item[-1]] += 1
-                highest_count = max(suit_count, key=suit_count.get)
-                faceup = highest_count
+                
+                # Choose the suit with the fewest cards in hand
+                highest_suit = max(suit_count, key=suit_count.get)
+                faceup = highest_suit
                 hands[f'player_{player}'].remove(card)
-                print(f'Player {player} has played a wild 8 and changed the suit to {highest_count}')
-                if len(hands[f'player_{player}']) > 0:
-                    finished = False
-                else:
-                    finished = True
+                print(f'Player {player} changed the suit to {highest_suit}')
+                finished = len(hands[f'player_{player}']) == 0
                 return faceup, hands, deck, finished
+        
+        # If no card is playable, pick up a card
         print(f"Player {player} could not play and picked up a card")
         pickup = deck.pop()
         hands[f'player_{player}'].append(pickup)
         return faceup, hands, deck, False
         
-
-        
-
-                
-
-
-
-
-
 gameloop()
     
