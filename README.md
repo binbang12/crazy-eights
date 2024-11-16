@@ -4,6 +4,7 @@ Crazy Eights is a fun and interactive card game you can play directly in your te
 
 ## Video Demo
 
+- https://1drv.ms/v/c/67b6b617b199262c/EXTBg1KkxfJIq-E8VEY6OmAB4vrAsvWxrVQou4iZbdXLfA
 - [Python Crazy Eights MP4](python_crazy_eights.mp4)
 
 
