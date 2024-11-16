@@ -121,35 +121,30 @@ def players_turn(player, deck, hands, faceup):
         time.sleep(2)
         hand = hands[f'player_{player}']
         
-        # Try to play a card that matches the suit first
         for card in hand:
-            if card[-1] == faceup[-1] and card[:-1] != "8":  # Matching suit
+            if card[-1] == faceup[-1] and card[:-1] != "8":
                 faceup = card
                 hands[f'player_{player}'].remove(card)
                 print(f'Player {player} has played [{card}]')
                 finished = len(hands[f'player_{player}']) == 0
                 return faceup, hands, deck, finished
 
-        # If no suit match, check for rank match (excluding 8)
         for card in hand:
-            if card[:-1] == faceup[:-1] and card[:-1] != "8":  # Rank match
+            if card[:-1] == faceup[:-1] and card[:-1] != "8": 
                 faceup = card
                 hands[f'player_{player}'].remove(card)
                 print(f'Player {player} has played [{card}]')
                 finished = len(hands[f'player_{player}']) == 0
                 return faceup, hands, deck, finished
         
-        # If no matching suit or rank, check if player has a wild 8 and play it strategically
         for card in hand:
-            if card[0] == '8':  # Wild card '8'
+            if card[0] == '8':
                 print(f'Player {player} has played a wild 8!')
                 
-                # Select the suit based on some strategy (e.g., the suit with the fewest cards in hand)
                 suit_count = {'H': 0, 'D': 0, 'C': 0, 'S': 0}
                 for item in hand:
                     suit_count[item[-1]] += 1
                 
-                # Choose the suit with the fewest cards in hand
                 highest_suit = max(suit_count, key=suit_count.get)
                 faceup = highest_suit
                 hands[f'player_{player}'].remove(card)
@@ -157,7 +152,6 @@ def players_turn(player, deck, hands, faceup):
                 finished = len(hands[f'player_{player}']) == 0
                 return faceup, hands, deck, finished
         
-        # If no card is playable, pick up a card
         print(f"Player {player} could not play and picked up a card")
         pickup = deck.pop()
         hands[f'player_{player}'].append(pickup)
