@@ -2,6 +2,9 @@
 
 Crazy Eights is a fun and interactive card game you can play directly in your terminal. Compete against the computer and be the first to play all your cards!
 
+## Demo
+
+https://1drv.ms/v/c/67b6b617b199262c/EXTBg1KkxfJIq-E8VEY6OmAB4vrAsvWxrVQou4iZbdXLfA
 
 
 ## Features
